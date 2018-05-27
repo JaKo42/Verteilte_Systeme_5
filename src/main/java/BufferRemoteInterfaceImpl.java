@@ -25,7 +25,12 @@ public class BufferRemoteInterfaceImpl extends UnicastRemoteObject implements Bu
     }
 
     @Override
-    public int getPosition() throws RemoteException {
+    public int getDataSize() throws RemoteException {
+        return buffer.data.length;
+    }
+
+    @Override
+    public int getQuantity() throws RemoteException {
         return buffer.getQuantity();
     }
 

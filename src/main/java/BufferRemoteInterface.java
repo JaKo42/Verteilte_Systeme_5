@@ -8,9 +8,11 @@ public interface BufferRemoteInterface extends Remote {
 
   Object consume() throws RemoteException, InterruptedException;
 
+  int getDataSize() throws RemoteException;
+
   int getFirst() throws RemoteException;
 
-  int getPosition() throws RemoteException;
+  int getQuantity() throws RemoteException;
 
   int getLastFilledPosition() throws RemoteException;
 

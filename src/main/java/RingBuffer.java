@@ -1,18 +1,20 @@
 import java.util.concurrent.Semaphore;
 
 public class RingBuffer {
-
+    //TODO Quelle entfernen!!!
     //https://www.programmieraufgaben.ch/aufgabe/ringpuffer-mit-arrays/yui8z5du
 
     int[] data;
     int quantity;
     int first;
-    Semaphore sem = new Semaphore(2, true);
+    boolean start;
+    Semaphore sem = new Semaphore(1, true);
 
     public RingBuffer(int data) {
         this.data = new int[data];
         quantity = 0;
         first = 0;
+        start = true;
     }
 
 
@@ -20,35 +22,43 @@ public class RingBuffer {
         boolean b = true;
         while (b) {
             if (quantity >= data.length) {
-                sem.wait();
+
             } else {
-                b = false;
-                sem.acquire(1);
                 int newPos = getFirstFreePosition();
+                sem.acquire();
+                second:
                 while (true) {
-                    if (data[newPos] == 0) {
-                        sem.wait(10);
-                    } else
+                    if (data[newPos] != 0 && !start) {
+                        sem.release();
+                        break second;
+                    } else {
+                        start = false;
+                        b = false;
                         data[newPos] = i;
-                    quantity = quantity + 1;
-                    sem.release(1);
-                    break;
+                        quantity = quantity + 1;
+                        sem.release();
+                        break;
+                    }
+
                 }
             }
         }
     }
 
     public int get() throws InterruptedException {
-        if (0 == quantity)
-            return 0;
-        sem.acquire(2);
-        quantity = quantity - 1;
-        int i = data[first];
-        data[first] = 0;
-        first = (first + 1) % data.length;
-        sem.release(2);
-        return i;
-
+        while (true) {
+            sem.acquire();
+            if (0 >= this.quantity) {
+                sem.release();
+            } else {
+                quantity = quantity - 1;
+                int i = data[first];
+                data[first] = 0;
+                first = (first + 1) % data.length;
+                sem.release();
+                return i;
+            }
+        }
     }
 
     public int getFirstFreePosition() {
