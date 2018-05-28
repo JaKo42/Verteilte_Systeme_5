@@ -9,7 +9,7 @@ public class RMIProducerClient extends Thread {
     public static void main(String[] args) {
 
         try {
-            BufferRemoteInterface remRef = (BufferRemoteInterface) Naming.lookup("//localhost:1099/BufferServer");
+            BufferRemoteInterface remRef = (BufferRemoteInterface) Naming.lookup("//192.168.0.11:1099/BufferServer");
             Scanner scanner = new Scanner(System.in);
 
             System.out.println("Insert a starting number.");
@@ -22,9 +22,7 @@ public class RMIProducerClient extends Thread {
                 remRef.produce(i);
                 System.out.println("Produced: " + i);
                 System.out.println("Quantity: " + remRef.getQuantity());
-                System.out.println("First Free Position: " + remRef.getFirstFreePosition());
-                System.out.println("Last filled quantity: " + remRef.getLastFilledPosition());
-                i++;
+                System.out.println("************\n");
                 Thread.sleep(200);
             }
 
