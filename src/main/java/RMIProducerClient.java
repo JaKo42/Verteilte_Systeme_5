@@ -2,45 +2,43 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Scanner;
 
 public class RMIProducerClient extends Thread {
 
-    static int i = 0;
-
     public static void main(String[] args) {
 
-        Thread t = null;
-  //      for (int j = 0; j < 2; j++) {
-                t = new Thread(new RMIProducerClient());
-                t.start();
-    //    }
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        try {
+            BufferRemoteInterface remRef = (BufferRemoteInterface) Naming.lookup("//localhost:1099/BufferServer");
+            Scanner scanner = new Scanner(System.in);
 
-    @Override
-    public void run() {
+            System.out.println("Insert a starting number.");
+            int in = Integer.parseInt(scanner.nextLine());
+            System.out.println("Insert the required Quantity to produce.");
+            int out = Integer.parseInt(scanner.nextLine());
 
-        while (true) {
-            try {
-                BufferRemoteInterface remRef = (BufferRemoteInterface) Naming.lookup("//localhost:1099/BufferServer");
+            for (int i = in; i < in+out; i++) {
+
                 remRef.produce(i);
                 System.out.println("Produced: " + i);
                 System.out.println("Quantity: " + remRef.getQuantity());
                 System.out.println("First Free Position: " + remRef.getFirstFreePosition());
                 System.out.println("Last filled quantity: " + remRef.getLastFilledPosition());
                 i++;
-                Thread.sleep(800);
-
-
-            } catch (RemoteException | MalformedURLException | NotBoundException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.sleep(200);
             }
+
+
+        } catch (InterruptedException | RemoteException | MalformedURLException | NotBoundException e) {
+            e.printStackTrace();
         }
+
+
     }
+
+
+
+
+
+
 }

@@ -1,8 +1,6 @@
 import java.util.concurrent.Semaphore;
 
 public class RingBuffer {
-    //TODO Quelle entfernen!!!
-    //https://www.programmieraufgaben.ch/aufgabe/ringpuffer-mit-arrays/yui8z5du
 
     int[] data;
     int quantity;
@@ -21,11 +19,11 @@ public class RingBuffer {
     public void add(int i) throws InterruptedException {
         boolean b = true;
         while (b) {
+            sem.acquire();
             if (quantity >= data.length) {
-
+                sem.release();
             } else {
                 int newPos = getFirstFreePosition();
-                sem.acquire();
                 second:
                 while (true) {
                     if (data[newPos] != 0 && !start) {
